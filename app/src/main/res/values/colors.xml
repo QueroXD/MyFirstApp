@@ -2,7 +2,8 @@
 <resources>
     <color name="background">@color/lightGreen</color>
     <color name="textColor">@color/white</color>
-
+    <color name="primary">#6200EE</color>
+    <color name="accent">#03DAC5</color>
 
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>

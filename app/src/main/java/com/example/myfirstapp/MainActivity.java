@@ -1,5 +1,6 @@
 package com.example.myfirstapp;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -23,11 +24,11 @@ public class MainActivity extends AppCompatActivity {
         setNumericButtonClickListener();
         setOperatorButtonClickListener();
 
-        findViewById(R.id.buttonClear).setOnClickListener(v -> {
-            currentInput = "";
-            firstNumber = 0.0;
-            operator = "";
-            resultText.setText("0");
+        findViewById(R.id.buttonClear).setOnClickListener(v -> clearCalculator());
+
+        findViewById(R.id.buttonConvert).setOnClickListener(v -> {
+            Intent intent = new Intent(MainActivity.this, ConverterActivity.class);
+            startActivity(intent);
         });
     }
 
@@ -38,17 +39,14 @@ public class MainActivity extends AppCompatActivity {
             resultText.setText(currentInput);
         };
 
-        findViewById(R.id.button0).setOnClickListener(listener);
-        findViewById(R.id.button1).setOnClickListener(listener);
-        findViewById(R.id.button2).setOnClickListener(listener);
-        findViewById(R.id.button3).setOnClickListener(listener);
-        findViewById(R.id.button4).setOnClickListener(listener);
-        findViewById(R.id.button5).setOnClickListener(listener);
-        findViewById(R.id.button6).setOnClickListener(listener);
-        findViewById(R.id.button7).setOnClickListener(listener);
-        findViewById(R.id.button8).setOnClickListener(listener);
-        findViewById(R.id.button9).setOnClickListener(listener);
-        findViewById(R.id.buttonDot).setOnClickListener(listener);
+        int[] numericButtons = {
+                R.id.button0, R.id.button1, R.id.button2, R.id.button3, R.id.button4,
+                R.id.button5, R.id.button6, R.id.button7, R.id.button8, R.id.button9, R.id.buttonDot
+        };
+
+        for (int id : numericButtons) {
+            findViewById(id).setOnClickListener(listener);
+        }
     }
 
     private void setOperatorButtonClickListener() {
@@ -61,42 +59,54 @@ public class MainActivity extends AppCompatActivity {
             }
         };
 
-        findViewById(R.id.buttonAdd).setOnClickListener(operatorListener);
-        findViewById(R.id.buttonSubtract).setOnClickListener(operatorListener);
-        findViewById(R.id.buttonMultiply).setOnClickListener(operatorListener);
-        findViewById(R.id.buttonDivide).setOnClickListener(operatorListener);
-        findViewById(R.id.buttonSquareRoot).setOnClickListener(v -> {
-            if (!currentInput.isEmpty()) {
-                double number = Double.parseDouble(currentInput);
-                double result = Math.sqrt(number);
-                resultText.setText(String.valueOf(result));
-                currentInput = "";
-            }
-        });
-        findViewById(R.id.buttonEqual).setOnClickListener(v -> {
-            if (!currentInput.isEmpty()) {
-                double secondNumber = Double.parseDouble(currentInput);
-                double result;
+        int[] operatorButtons = {R.id.buttonAdd, R.id.buttonSubtract, R.id.buttonMultiply, R.id.buttonDivide};
 
-                switch (operator) {
-                    case "+":
-                        result = firstNumber + secondNumber;
-                        break;
-                    case "-":
-                        result = firstNumber - secondNumber;
-                        break;
-                    case "*":
-                        result = firstNumber * secondNumber;
-                        break;
-                    case "/":
-                        result = secondNumber != 0 ? firstNumber / secondNumber : 0; // Avoid division by zero
-                        break;
-                    default:
-                        return;
-                }
-                resultText.setText(String.valueOf(result));
-                currentInput = "";
+        for (int id : operatorButtons) {
+            findViewById(id).setOnClickListener(operatorListener);
+        }
+
+        findViewById(R.id.buttonSquareRoot).setOnClickListener(v -> calculateSquareRoot());
+        findViewById(R.id.buttonEqual).setOnClickListener(v -> calculateResult());
+    }
+
+    private void calculateResult() {
+        if (!currentInput.isEmpty()) {
+            double secondNumber = Double.parseDouble(currentInput);
+            double result = 0.0;
+
+            switch (operator) {
+                case "+":
+                    result = firstNumber + secondNumber;
+                    break;
+                case "-":
+                    result = firstNumber - secondNumber;
+                    break;
+                case "*":
+                    result = firstNumber * secondNumber;
+                    break;
+                case "/":
+                    result = secondNumber != 0 ? firstNumber / secondNumber : 0;
+                    break;
             }
-        });
+
+            resultText.setText(String.valueOf(result));
+            currentInput = "";
+        }
+    }
+
+    private void calculateSquareRoot() {
+        if (!currentInput.isEmpty()) {
+            double number = Double.parseDouble(currentInput);
+            double result = Math.sqrt(number);
+            resultText.setText(String.valueOf(result));
+            currentInput = "";
+        }
+    }
+
+    private void clearCalculator() {
+        currentInput = "";
+        firstNumber = 0.0;
+        operator = "";
+        resultText.setText("0");
     }
 }
